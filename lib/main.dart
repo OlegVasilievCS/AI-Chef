@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_ai_app/screens/landing_page.dart';
+import 'package:recipe_ai_app/screens/recipe_steps_screen.dart';
 import 'package:recipe_ai_app/services/ingredients_list.dart';
 import 'services/gemini_service.dart';
 import 'cubit/recipe_cubit.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Recipe Suggestions',
-      home: LandingPage(),
+      home: RecipeStepsScreen(),
     );
   }
 }
