@@ -12,17 +12,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _controller = TextEditingController();
   final IngredientsList ingredientsList = IngredientsList();
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   void _fetchRecipe() {
-    final ingredients = _controller.text.trim();
     context.read<RecipeCubit>().fetchRecipe(ingredientsList.getRecipe());
   }
 
@@ -38,20 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter ingredients you have (e.g., chicken, basil, cream)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => _controller.clear(),
-                ),
-              ),
-              onSubmitted: (_) => _fetchRecipe(),
-            ),
+
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _fetchRecipe,

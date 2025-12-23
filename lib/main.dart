@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Recipe Suggestions',
-      home: RecipeStepsScreen(),
+      home: LandingPage(),
     );
   }
 }

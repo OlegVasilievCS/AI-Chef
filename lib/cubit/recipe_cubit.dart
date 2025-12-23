@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recipe_ai_app/services/recipe_steps.dart';
 import '../services/gemini_service.dart';
 import 'recipe_state.dart';
 
 class RecipeCubit extends Cubit<RecipeState> {
   final GeminiService _geminiService;
+
 
   RecipeCubit(this._geminiService) : super(RecipeInitial());
 
@@ -16,6 +18,8 @@ class RecipeCubit extends Cubit<RecipeState> {
     emit(RecipeLoading());
     try {
       String result = await _geminiService.getRecipe(ingredients);
+      final RecipeSteps _recipeSteps = RecipeSteps(result);
+      _recipeSteps.parseTextIntoSteps();
 
       if (result.startsWith("Error:")) {
         emit(RecipeError(result));
