@@ -9,6 +9,10 @@ class RecipeCubit extends Cubit<RecipeState> {
 
   RecipeCubit(this._geminiService) : super(RecipeInitial());
 
+  // Future<void> fetchImageAnalysis(String baseImage) async{
+  //   String result = await _imageAnalysisService.getAnalysis(baseImage);
+  // }
+
   Future<void> fetchRecipe(String ingredients) async {
     if (ingredients.isEmpty) {
       emit(const RecipeError("Please enter ingredients."));

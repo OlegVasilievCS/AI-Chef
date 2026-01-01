@@ -1,17 +1,30 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'image_analyze_screen.dart';
+
 class ImageUploadScreen extends StatefulWidget {
   @override
   _ImageUploadScreenState createState() => _ImageUploadScreenState();
-  }
-
-  String imagePath = '';
+}
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
+  String imagePath = '';
+  String base64ImageString = '';
+
+  // Future<String> imageBytestoBase64(FFUploadedFile uploadedFile) async {
+  //   // Add your function code here!
+  //   if (uploadedFile.bytes == null) {
+  //     throw Exception('No file bytes found.');
+  //   }
+  //   return base64Encode(uploadedFile.bytes!);
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +43,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                     setState(() {
                       imagePath = image.path;
                     });
+                    final bytes = await image.readAsBytes();
+                    base64ImageString = base64Encode(bytes);
                   }
                 },
                 child: const Text('Pick Image'),
@@ -56,21 +71,20 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                 fit: BoxFit.cover,
               ),
             ElevatedButton(
-              onPressed: () async {
-                final ImagePicker picker = ImagePicker();
-                final XFile? image = await picker.pickImage(source: ImageSource.camera);
-                if (image != null) {
-                  setState(() {
-                    imagePath = image.path;
-                  });
-                }
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => ImageAnalyzeScreen(base64image: base64ImageString),
+                  ),
+                );
+                print("Test Oleg" + base64ImageString);
+                print("Test Oleg End");
               },
               child: const Text('Analyze Photo'),
             ),
           ],
         ),
       ),
-
     );
   }
 }
