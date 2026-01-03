@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../services/image_analysis_service.dart';
 import 'image_analyze_screen.dart';
 
 class ImageUploadScreen extends StatefulWidget {
@@ -16,13 +17,17 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   String imagePath = '';
   String base64ImageString = '';
 
-  // Future<String> imageBytestoBase64(FFUploadedFile uploadedFile) async {
-  //   // Add your function code here!
-  //   if (uploadedFile.bytes == null) {
-  //     throw Exception('No file bytes found.');
-  //   }
-  //   return base64Encode(uploadedFile.bytes!);
-  // }
+
+  Future <String> _fetchImageAnalysis(String base64String) async {
+
+    ImageAnalysisService imageAnalysisService = ImageAnalysisService();
+    String analysis = await imageAnalysisService.getAnalysis(base64String);
+
+    return analysis;
+
+    }
+
+
 
 
   @override
@@ -71,10 +76,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                 fit: BoxFit.cover,
               ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                String ingredient_list = await _fetchImageAnalysis(base64ImageString);
+
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => ImageAnalyzeScreen(base64image: base64ImageString),
+                    builder: (context) => ImageAnalyzeScreen(base64imageList: ingredient_list)
                   ),
                 );
                 print("Test Oleg" + base64ImageString);
