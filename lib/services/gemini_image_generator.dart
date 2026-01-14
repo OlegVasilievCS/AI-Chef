@@ -1,31 +1,42 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-class GeminiImageGenerator {
-  final String baseUrl = "https://image.pollinations.ai/prompt";
+class HFImageGenerator {
+  final String baseUrl = "https://router.huggingface.co/hf-inference/models";
+  final String modelId = "stabilityai/stable-diffusion-xl-base-1.0";
+  String get apiKey => dotenv.env['HF_API_KEY'] ?? "";
+
+  final Map<String, Uint8List> _cache = {};
 
   Future<Uint8List?> textToImage(String prompt) async {
+    if (_cache.containsKey(prompt)) return _cache[prompt];
+
+    final url = Uri.parse("$baseUrl/$modelId");
     try {
-      final formattedPrompt = prompt.replaceAll(' ', '_');
-      final url = "$baseUrl/$formattedPrompt?width=1024&height=1024&nologo=true";
+      print("Starting generation for: ${prompt.substring(0, 20)}...");
 
-      print("Trying Pollinations with URL: $url");
-
-      final response = await http.get(Uri.parse(url))
-          .timeout(const Duration(seconds: 90));
-
-      print("Pollinations response status: ${response.statusCode}");
+      final response = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer $apiKey",
+          "Content-Type": "application/json",
+          "x-use-cache": "false",
+        },
+        body: jsonEncode({
+          "inputs": prompt,
+          "parameters": {"width": 1024, "height": 1024, "wait_for_model": true}
+        }),
+      ).timeout(const Duration(seconds: 90));
 
       if (response.statusCode == 200) {
-        print("Image generated successfully with Pollinations!");
+        _cache[prompt] = response.bodyBytes;
         return response.bodyBytes;
-      } else {
-        print("Pollinations error: ${response.statusCode}");
-        return null;
       }
+      return null;
     } catch (e) {
-      print("Pollinations request failed: $e");
+      print("Generation failed: $e");
       return null;
     }
   }
